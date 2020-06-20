@@ -5,7 +5,9 @@ import { db } from "./firebase";
 export const Context = createContext();
 
 export const CntProvider = (props) => {
-	//GET DATA FROM FRIBASE!!!
+	//SHOW ONLY ACCEPTED CHECKBOX "FILTER"
+	const [check, setCheck] = useState(false);
+	//GET DATA FROM FRIBASE PRIMARY COLLECTION!!!
 	const [data, setData] = useState([]);
 	useEffect(() => {
 		const unsubcribe = firebase
@@ -16,19 +18,55 @@ export const CntProvider = (props) => {
 					id: doc.id,
 					...doc.data(),
 				}));
-				setData(tempData);
+				const filtered = tempData.filter((t) => t.status === "accepted");
+				check ? setData(filtered) : setData(tempData);
+			});
+		return () => unsubcribe();
+	}, [check]);
+	//GET DATA FROM FRIBASE ARCHIVED COLLECTION!!!
+	const [archUser, setArchUser] = useState([]);
+	useEffect(() => {
+		const unsubcribe = firebase
+			.firestore()
+			.collection("archivedUsers")
+			.onSnapshot((snapshot) => {
+				const archData = snapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}));
+				setArchUser(archData);
 			});
 		return () => unsubcribe();
 	}, []);
-	console.log("data from cont", data);
-	// delete user
+	// DELTE USER FUNCTION
 	const DeleteUser = (id) => {
-		console.log("id", id);
 		db.collection("potentialColab")
 			.doc(id)
 			.delete()
 			.then(function () {
 				console.log("Document successfully deleted!");
+			})
+			.catch(function (error) {
+				console.error("Error removing document: ", error);
+			});
+	};
+	//ARCHIVE USER
+	const archiveUser = (id) => {
+		const archived = data.filter((t) => t.id == id);
+
+		firebase
+			.firestore()
+			.collection("archivedUsers")
+			.add(...archived)
+			.then(() => {
+				console.log("done!");
+			});
+
+		db.collection("potentialColab")
+			.doc(id)
+			.delete()
+			.then(function () {
+				console.log("Document successfully transfered!");
 			})
 			.catch(function (error) {
 				console.error("Error removing document: ", error);
@@ -48,6 +86,10 @@ export const CntProvider = (props) => {
 				DeleteUser,
 				setShow,
 				handleClose,
+				check,
+				setCheck,
+				archiveUser,
+				archUser,
 			}}
 		>
 			{props.children}
