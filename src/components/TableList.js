@@ -1,15 +1,18 @@
 import React, { useContext } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
-import { ExclamationCircle, CircleFill, TypeH3 } from "react-bootstrap-icons";
+import Form from "react-bootstrap/Form";
+import { ExclamationCircle, CircleFill } from "react-bootstrap-icons";
 import { Context } from "../Context";
 import Toggle from "./Toggle";
 export default function TableList() {
-	const { DeleteUser, data, archiveUser } = useContext(Context);
+	const { DeleteUser, data, archiveUser, darkMode, updateUser } = useContext(
+		Context
+	);
 	return (
 		<>
 			<Toggle />
-			<Table striped bordered hover variant="dark">
+			<Table striped bordered hover variant={darkMode ? "dark" : "light"}>
 				<thead>
 					<tr>
 						<th>
@@ -38,7 +41,7 @@ export default function TableList() {
 											? { fill: "green", width: "10px" }
 											: { fill: "yellow", width: "10px" }
 									}
-								/>{" "}
+								/>
 							</td>{" "}
 							<td>{t.name}</td>{" "}
 							<td>
@@ -53,9 +56,21 @@ export default function TableList() {
 							<td>{t.country}</td>
 							<td>{t.dataAdded}</td>
 							<td>{t.note}</td>
-							<td>
+							<td style={{ display: "flex" }}>
+								<Form.Control
+									style={{ width: "30%" }}
+									as="select"
+									name="status"
+									//	value={values.status}
+									onChange={(e) => updateUser(t.id, e.target.value)}
+									type="text"
+								>
+									<option>waiting</option>
+									<option>declined</option>
+									<option>accepted</option>
+								</Form.Control>
 								<Button
-									style={{ marginRight: "10px" }}
+									style={{ margin: "0px 10px" }}
 									variant="outline-info"
 									size="sm"
 									onClick={() => {

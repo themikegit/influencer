@@ -71,11 +71,31 @@ export const CntProvider = (props) => {
 			.catch(function (error) {
 				console.error("Error removing document: ", error);
 			});
-	};
+  };
+  ///UPDATE STATUS
+  const [updateRecord, setupdateRecord] = useState()
+  const updateUser = (id, val) => {
+    setupdateRecord({ ...updateRecord, status: val });
+    console.log("object", id, val);
+    const updateDoc = db.collection("potentialColab").doc(id);
+    return updateDoc
+     .update({
+      status: val
+     })
+     .catch(function(error) {
+      console.error("Error updating document: ", error);
+     });
+   };
+  
 	//SHOW HIDE MODAL FOR ADD NEW PERSON
 	const [show, setShow] = useState(false);
 	const handleClose = () => setShow(false);
 	const handleShow = () => setShow(true);
+	//DARK MODE
+	const [darkMode, setdarkMode] = useState(false);
+	const setDark = () => {
+		setdarkMode(!darkMode);
+	};
 
 	return (
 		<Context.Provider
@@ -90,6 +110,10 @@ export const CntProvider = (props) => {
 				setCheck,
 				archiveUser,
 				archUser,
+				setDark,
+				darkMode,
+        setdarkMode,
+        updateUser
 			}}
 		>
 			{props.children}

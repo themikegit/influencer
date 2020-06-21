@@ -1,12 +1,13 @@
 import React, { useContext } from "react";
 import Table from "react-bootstrap/Table";
 import { Context } from "../Context";
+
 export default function Archive() {
-	const { archUser } = useContext(Context);
+	const { archUser, darkMode } = useContext(Context);
 	console.log("archUser", archUser);
 	return (
 		<>
-			<Table striped bordered hover variant="light">
+			<Table striped bordered hover variant={darkMode ? "dark" : "light"}>
 				<thead>
 					<tr>
 						<th>Name</th>
