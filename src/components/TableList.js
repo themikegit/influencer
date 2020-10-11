@@ -9,6 +9,7 @@ export default function TableList() {
 	const { DeleteUser, data, archiveUser, darkMode, updateUser } = useContext(
 		Context
 	);
+
 	return (
 		<>
 			<Toggle />
